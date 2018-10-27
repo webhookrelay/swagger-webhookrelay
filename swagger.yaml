@@ -114,6 +114,12 @@ paths:
       tags:
         - "tunnel"
       summary: Update Tunnel Details
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TunnelCreateRequest'
       responses:
         200:
           description: Successful Response
@@ -155,8 +161,105 @@ paths:
           description: Successful Response          
         404:
           description: Tunnel not found        
-
+  # Token configuration
+  /v1/tokens:
+    x-summary: List and create tunnels
+    get:
+      tags:
+        - "token"
+      summary: List All Authentication Tokens
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Token'
+          
+    post:
+      tags:
+        - "token"
+      summary: Create a New Authentication Token
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TokenRequest'
+      responses:
+        201:
+          description: 'Create a new token'
+          schema:
+            $ref: '#/definitions/TokenCreateResponse'
+          examples:
+            application/json:                
+              created_at: 1535365683
+              updated_at: 1536161359              
+              id: cc58c9ea-5fa7-466e-91dc-5c08d0b1127c
+              description: ''
+              scopes:
+                buckets: []
+                tunnels:
+                - foo
+                - bar
+                - faa                
+              active: true
+              api_disabled: true
+        400:
+          description: ''
+  /v1/tokens/{tokenID}/: 
+    x-summary: Update and delete tokens
+    parameters:
+      - name: "tokenID"
+        in: "path"
+        description: "ID of token"
+        required: true
+        type: "string"
+    put:
+      tags:
+        - "token"
+      summary: Update Token Details
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TokenRequest'
+      responses:
+        200:
+          description: Successful Response
+          schema:
+             $ref: "#/definitions/Token"
+          examples:
+            application/json:
+              application/json:                
+              created_at: 1535365683
+              updated_at: 1536161359              
+              id: cc58c9ea-5fa7-466e-91dc-5c08d0b1127c
+              description: ''
+              scopes:
+                buckets: []
+                tunnels:
+                - foo
+                - bar
+                - faa                
+              active: true
+              api_disabled: true
+        404:
+          description: Tunnel not found
+        400:
+          description: Bad request (check response message)
+    delete:
+      tags:
+        - "token"
+      summary: Delete Token
+      responses:
+        200:
+          description: Successful Response          
+        404:
+          description: Token not found
 definitions:
+  # --------------------------- tunnels ---------------------------
   Tunnel:
     title: Tunnel
     type: object
@@ -183,11 +286,7 @@ definitions:
         type: object
         $ref: '#/definitions/TunnelAuth'
       crypto:
-        type: string
-      # choices:
-      #   type: array
-      #   items:
-      #     $ref: '#/definitions/Choice'
+        type: string      
     example:
       created_at: 1534409264
       updated_at: 1534409264
@@ -212,7 +311,7 @@ definitions:
       crypto: 'off'
 
   TunnelAuth:
-    title: TunnelAuth
+    title: Tunnel Authentication
     type: object
     properties:
       id:
@@ -228,19 +327,7 @@ definitions:
       password:
         type: string
       token:
-        type: string
-  # Choice:
-  #   title: Choice
-  #   type: object
-  #   properties:
-  #     votes:
-  #       type: integer
-  #       format: int32
-  #     choice:
-  #       type: string
-  #   required:
-  #     - votes
-  #     - choice
+        type: string  
   TunnelCreateRequest:
     title: Tunnel Create Request
     type: object
@@ -287,6 +374,74 @@ definitions:
       name: tunnel-x
       subdomain: tunnelx
       destination: http://localhost:4000
+  # --------------------------- tokens ---------------------------
+  Token:
+    title: Token
+    type: object
+    properties:
+      id:
+        type: string      
+      created_at:
+        type: integer
+      updated_at:
+        type: integer
+      last_login:
+        type: string  
+      description:
+        type: string
+      scopes:
+        type: object
+        $ref: '#/definitions/TokenScopes'
+      api_access:
+        type: string
+
+  TokenRequest:
+    title: Token Request
+    type: object
+    properties:
+      description:
+        type: string
+      scopes:
+        type: object
+        $ref: '#/definitions/TokenScopes'
+      api_access:
+        type: string
+        description: "Can be either 'enabled' or 'disabled'. Tokens with disabled API access can only be used to open tunnels or forward webhooks"
+  TokenCreateResponse:
+     title: Token Create Response
+     type: object
+     properties:
+      id:
+        type: string
+        description: "Token ID is used as a key"
+      secret:
+        type: string
+        description: "This is the only time secret is revealed as it is already encrypted by the system"
+      created_at:
+        type: integer
+      updated_at:
+        type: integer
+      last_login:
+        type: string  
+      description:
+        type: string
+      scopes:
+        type: object
+        $ref: '#/definitions/TokenScopes'
+      api_access:
+        type: string  
+  TokenScopes:
+    title: TokenScopes
+    type: object
+    properties:
+      tunnels:
+        type: array
+        items:
+          type: string
+      buckets:
+        type: array
+        items:
+          type: string
   # QuestionRequest:
   #   title: Question Request
   #   type: object
