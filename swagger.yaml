@@ -22,7 +22,7 @@ paths:
     x-summary: List and create tunnels
     get:
       tags:
-        - "tunnel"
+        - "Tunnels"
       summary: List All Tunnels
       responses:
         200:
@@ -41,7 +41,7 @@ paths:
                 host: 'tunnelx.webrelay.io'
     post:
       tags:
-        - "tunnel"
+        - "Tunnels"
       description: >-
         You may create your own tunnel using this action. It takes a JSON
         object containing a tunnel request with a specified destination. Paid plans
@@ -78,7 +78,7 @@ paths:
         type: "string"
     get:
       tags:
-        - "tunnel"
+        - "Tunnels"
       summary: Get Tunnel Details
       responses:
         200:
@@ -112,7 +112,7 @@ paths:
           description: Tunnel not found
     put:
       tags:
-        - "tunnel"
+        - "Tunnels"
       summary: Update Tunnel Details
       parameters:
         - name: body
@@ -154,7 +154,7 @@ paths:
           description: Bad request (check response message)
     delete:
       tags:
-        - "tunnel"
+        - "Tunnels"
       summary: Delete Tunnel
       responses:
         200:
@@ -166,7 +166,7 @@ paths:
     x-summary: List and create tunnels
     get:
       tags:
-        - "token"
+        - "Tokens"
       summary: List All Authentication Tokens
       responses:
         200:
@@ -191,7 +191,7 @@ paths:
           
     post:
       tags:
-        - "token"
+        - "Tokens"
       summary: Create a New Authentication Token
       parameters:
         - name: body
@@ -230,7 +230,7 @@ paths:
         type: "string"
     put:
       tags:
-        - "token"
+        - "Tokens"
       summary: Update Token Details
       parameters:
         - name: body
@@ -264,7 +264,7 @@ paths:
           description: Bad request (check response message)
     delete:
       tags:
-        - "token"
+        - "Tokens"
       summary: Delete Token
       responses:
         200:
@@ -276,7 +276,7 @@ paths:
     x-summary: List and create buckets
     get:
       tags:
-        - "bucket"
+        - "Buckets"
       summary: List All Buckets
       responses:
         200:
@@ -320,7 +320,7 @@ paths:
                     created_by: ''
     post:
       tags:
-        - "bucket"
+        - "Buckets"
       description: >-
         You may create your own bucket using this action. It takes a JSON
         object containing a bucket request. Once bucket is created, it gets 
@@ -351,7 +351,7 @@ paths:
         type: "string"
     get:
       tags:
-        - "bucket"
+        - "Buckets"
       summary: Get Bucket Details
       responses:
         200:
@@ -395,7 +395,7 @@ paths:
           description: Bucket not found
     delete:
       tags:
-        - "bucket"
+        - "Buckets"
       summary: Delete Bucket
       responses:
         200:
@@ -413,7 +413,7 @@ paths:
         type: "string"
     post:
       tags:
-        - "input"
+        - "Inputs"
       description: >-
         Create one or more inputs for the bucket to get unique public endpoints.
       summary: Create a New Input
@@ -445,7 +445,7 @@ paths:
         type: "string"
     delete:
       tags:
-        - "input"
+        - "Inputs"
       description: >-
         Delete input. Once input is deleted, you will not be able to recreate a new input with the same ID.
       summary: Delete Input      
@@ -465,7 +465,7 @@ paths:
         type: "string"
     post:
       tags:
-        - "output"
+        - "Outputs"
       description: >-
         Create one or more outputs for the bucket to start forwarding webhooks to those destinations.
       summary: Create a New Output
@@ -497,7 +497,7 @@ paths:
         type: "string"
     put:
       tags:
-        - "output"
+        - "Outputs"
       description: >-
         Update output destination or make it public/internal.
       summary: Update Output
@@ -516,7 +516,7 @@ paths:
           description: "Invalid output request supplied"
     delete:
       tags:
-        - "output"
+        - "Outputs"
       summary: Delete Output      
       responses:
         200:
