@@ -271,6 +271,137 @@ paths:
           description: Successful Response          
         404:
           description: Token not found
+  # Bucket configuration
+  /v1/buckets:
+    x-summary: List and create buckets
+    get:
+      tags:
+        - "bucket"
+      summary: List All Buckets
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Bucket'
+          examples:
+            examples:
+              application/json:
+                - created_at: 1496610194
+                  updated_at: 1532192772
+                  id: 339ed2e3-70cf-4a81-8db8-e95a9251155d
+                  name: webhook-demo
+                  description: auto-created input for http://localhost:8090/webhook
+                  suspended: false
+                  account_id: bd7e1dfc-54c8-408c-a885-7498bf1d8522
+                  auth:
+                    created_at: -62135596800
+                    updated_at: -62135596800
+                    id: ''
+                    type: none
+                  inputs:
+                  - created_at: 1496610195
+                    updated_at: 1496610195
+                    id: 5e722a5e-f3d9-4eec-9e9f-79f1158e4b10
+                    name: ingress for http://localhost:8090/webhook
+                    bucket_id: 339ed2e3-70cf-4a81-8db8-e95a9251155d
+                    description: auto-created input for http://localhost:8090/webhook
+                    created_by: ''
+                  outputs:
+                  - created_at: 1496610196
+                    updated_at: 1496610196
+                    id: 3ec1899c-7069-4f55-88c6-5d8f5da4fa30
+                    name: http://localhost:8090/webhook
+                    bucket_id: 339ed2e3-70cf-4a81-8db8-e95a9251155d
+                    destination: http://localhost:8090/webhook
+                    internal: true
+                    description: auto-created output for http://localhost:8090/webhook
+                    created_by: ''
+    post:
+      tags:
+        - "bucket"
+      description: >-
+        You may create your own bucket using this action. It takes a JSON
+        object containing a bucket request. Once bucket is created, it gets 
+        assigned a default input to accept webhooks but you will still have to 
+        create a new output to give it a destination.
+      summary: Create a New Bucket
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/BucketRequest'
+      responses:
+        201:
+          description: ''
+          schema:
+            $ref: '#/definitions/Bucket'          
+        400:
+          description: "Invalid bucket request supplied"
+  
+  /v1/buckets/{bucketID}/:
+    x-summary: Get and delete buckets
+    parameters:
+      - name: "bucketID"
+        in: "path"
+        description: "ID of a bucket to return"
+        required: true
+        type: "string"
+    get:
+      tags:
+        - "bucket"
+      summary: Get Bucket Details
+      responses:
+        200:
+          description: Successful Response
+          schema:
+             $ref: "#/definitions/Bucket"
+          examples:
+            application/json:
+              created_at: 1496610194
+              updated_at: 1532192772
+              id: 339ed2e3-70cf-4a81-8db8-e95a9251155d
+              name: webhook-demo
+              description: auto-created input for http://localhost:8090/webhook
+              suspended: false
+              account_id: bd7e1dfc-54c8-408c-a885-7498bf1d8522
+              auth:
+                created_at: -62135596800
+                updated_at: -62135596800
+                id: ''
+                type: none
+              inputs:
+              - created_at: 1496610195
+                updated_at: 1496610195
+                id: 5e722a5e-f3d9-4eec-9e9f-79f1158e4b10
+                name: ingress for http://localhost:8090/webhook
+                bucket_id: 339ed2e3-70cf-4a81-8db8-e95a9251155d
+                description: auto-created input for http://localhost:8090/webhook
+                created_by: ''
+              outputs:
+              - created_at: 1496610196
+                updated_at: 1496610196
+                id: 3ec1899c-7069-4f55-88c6-5d8f5da4fa30
+                name: http://localhost:8090/webhook
+                bucket_id: 339ed2e3-70cf-4a81-8db8-e95a9251155d
+                destination: http://localhost:8090/webhook
+                internal: true
+                description: auto-created output for http://localhost:8090/webhook
+                created_by: ''
+
+        404:
+          description: Bucket not found
+    delete:
+      tags:
+        - "bucket"
+      summary: Delete Bucket
+      responses:
+        200:
+          description: Successful Response          
+        404:
+          description: Bucket not found   
 definitions:
   # --------------------------- tunnels ---------------------------
   Tunnel:
@@ -455,6 +586,113 @@ definitions:
         type: array
         items:
           type: string
+  # --------------------------- buckets ---------------------------
+  BucketRequest:
+    title: Bucket create request
+    type: object
+    properties:
+      name:
+        type: string        
+      description:
+        type: string
+  Bucket:
+    title: Bucket
+    type: object
+    properties:
+      id:
+        type: string
+      created_at:
+        type: integer
+      updated_at:
+        type: integer
+      name:
+        type: string
+      description:
+        type: string
+      auth:
+        type: object
+        $ref: '#/definitions/BucketAuth'         
+      inputs:
+        type: "array"        
+        items:
+          $ref: "#/definitions/Input"
+      outputs:
+        type: "array"        
+        items:
+          $ref: "#/definitions/Output"
+
+  BucketAuth:
+    title: BucketAuth
+    type: object
+    properties:
+      id:
+        type: string
+      created_at:
+        type: integer
+      updated_at:
+        type: integer
+      type:
+        type: string
+      username:
+        type: string
+      password:
+        type: string
+      token:
+        type: string      
+
+  Input:
+    title: Input
+    type: object
+    properties:
+      id:
+        type: string
+      created_at:
+        type: integer
+      updated_at:
+        type: integer
+      name:
+        type: string
+      description:
+        type: string
+  InputRequest:
+    title: Input create request
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+
+  Output:
+    title: Output
+    type: object
+    properties:
+      id:
+        type: string
+      created_at:
+        type: integer
+      updated_at:
+        type: integer
+      name:
+        type: string
+      internal:
+        type: boolean
+      destination:
+        type: string
+      description:
+        type: string
+  OutputRequest:
+    title: Output create request
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      internal:
+        type: boolean
+      destination:
+        type: string
+        description: "Destination, where to forward the webhook, such as 'http://localhost:4000'" 
+      
   # QuestionRequest:
   #   title: Question Request
   #   type: object
