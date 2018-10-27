@@ -454,6 +454,75 @@ paths:
           description: ''
         404:
           description: "Input or Bucket not found"
+  # Outputs
+  /v1/buckets/{bucketID}/outputs:
+    x-summary: Manage bucket outputs
+    parameters:
+      - name: "bucketID"
+        in: "path"
+        description: "ID of a bucket to create output in"
+        required: true
+        type: "string"
+    post:
+      tags:
+        - "output"
+      description: >-
+        Create one or more outputs for the bucket to start forwarding webhooks to those destinations.
+      summary: Create a New Output
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OutputRequest'
+      responses:
+        201:
+          description: ''
+          schema:
+            $ref: '#/definitions/Output'          
+        400:
+          description: "Invalid output request supplied"
+  /v1/buckets/{bucketID}/outputs/{outputID}:
+    x-summary: Manage bucket outputs
+    parameters:
+      - name: "bucketID"
+        in: "path"
+        description: "ID of a bucket to create input in"
+        required: true
+        type: "string"
+      - name: "outputID"
+        in: "path"
+        description: "ID of an output to manage"
+        required: true
+        type: "string"
+    put:
+      tags:
+        - "output"
+      description: >-
+        Update output destination or make it public/internal.
+      summary: Update Output
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/OutputRequest'
+      responses:
+        200:
+          description: 'Output updated'
+          schema:
+            $ref: '#/definitions/Output'          
+        400:
+          description: "Invalid output request supplied"
+    delete:
+      tags:
+        - "output"
+      summary: Delete Output      
+      responses:
+        200:
+          description: ''
+        404:
+          description: "Output or Bucket not found"
 
 definitions:
   # --------------------------- tunnels ---------------------------
