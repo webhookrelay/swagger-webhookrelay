@@ -175,6 +175,19 @@ paths:
             type: array
             items:
               $ref: '#/definitions/Token'
+          examples:
+            application/json:
+              - created_at: 1535232797
+                updated_at: 1540394529
+                last_login: 3 days ago
+                id: 0a8dd8b4-aaaa-rrrr-dddd-ccc860e3005a
+                description: linux cli
+                scopes:
+                  buckets: []
+                  tunnels: []
+                active: true
+                api_access: enabled
+
           
     post:
       tags:
