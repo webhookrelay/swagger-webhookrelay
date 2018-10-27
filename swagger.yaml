@@ -1,0 +1,309 @@
+swagger: '2.0'
+info:
+  version: '1.0'
+  title: "Webhook Relay"
+  description: >-
+    Fast, secure tunnels to your internal networks. Webhook Relay allows you to expose your localhost 
+    or any other server in private network to the public internet without configuring port forwarding 
+    or firewalls. API accepts username/password, token key/secret pairs and JWT authentication methods.
+  # license:
+  #   name: Propriatary
+  #   url: https://github.com/apiaryio/polls-api/blob/master/LICENSE
+host: webhookrelay.apiblueprint.org
+basePath: /
+schemes:
+- "https"
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /v1/tunnels:
+    x-summary: List and create tunnels
+    get:
+      tags:
+        - "tunnel"
+      summary: List All Tunnels
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Tunnel'
+          examples:
+            application/json:
+              - id: 'b3237483-e96e-4f3a-905c-0d9603d66c1f'
+                created_at: 1534409264
+                updated_at: 1534409264
+                name: 'tunnel-x'
+                destination: 'http://localhost:4000'
+                host: 'tunnelx.webrelay.io'
+    post:
+      tags:
+        - "tunnel"
+      description: >-
+        You may create your own tunnel using this action. It takes a JSON
+        object containing a tunnel request with a specified destination. Paid plans
+        have an option to specify either encryption, subdomain or full domain.
+      summary: Create a New Tunnel
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/TunnelCreateRequest'
+      responses:
+        201:
+          description: ''
+          schema:
+            $ref: '#/definitions/Tunnel'
+          examples:
+            application/json:
+                id: b3237483-e96e-4f3a-905c-0d9603d66c1f
+                created_at: 1534409264
+                updated_at: 1534409264
+                name: 'tunnel-x'
+                destination: 'http://localhost:4000'
+                host: 'tunnelx.webrelay.io'
+        400:
+          description: "Invalid tunnel request supplied"
+  /v1/tunnels/{tunnelID}/:
+    x-summary: Get, update and delete tunnels
+    parameters:
+      - name: "tunnelID"
+        in: "path"
+        description: "ID of tunnel to return"
+        required: true
+        type: "string"
+    get:
+      tags:
+        - "tunnel"
+      summary: Get Tunnel Details
+      responses:
+        200:
+          description: Successful Response
+          schema:
+             $ref: "#/definitions/Tunnel"
+          examples:
+            application/json:
+              created_at: 1534409264
+              updated_at: 1534409264
+              id: b3237483-e96e-4f3a-905c-0d9603d66c1f
+              destination: http://localhost:8090
+              name: tunnel
+              group: ''
+              addr: ''
+              host: tunnelx.webrelay.io
+              mode: active
+              protocol: http
+              account_id: bd7e1dfc-54c8-408c-a885-7498bf1d8522
+              description: ''
+              features: 
+              auth:
+                created_at: 1534409264
+                updated_at: 1534409264
+                id: eb3fbc49-0713-48b1-8971-a7c4a9c64dfb
+                type: none
+              agent_id: ''
+              ingress_rules: 
+              crypto: 'off'
+        404:
+          description: Tunnel not found
+    put:
+      tags:
+        - "tunnel"
+      summary: Update Tunnel Details
+      responses:
+        200:
+          description: Successful Response
+          schema:
+             $ref: "#/definitions/Tunnel"
+          examples:
+            application/json:
+              created_at: 1534409264
+              updated_at: 1534409264
+              id: b3237483-e96e-4f3a-905c-0d9603d66c1f
+              destination: http://localhost:8090
+              name: tunnel
+              group: ''
+              addr: ''
+              host: tunnelx.webrelay.io
+              mode: active
+              protocol: http
+              account_id: bd7e1dfc-54c8-408c-a885-7498bf1d8522
+              description: ''
+              features: 
+              auth:
+                created_at: 1534409264
+                updated_at: 1534409264
+                id: eb3fbc49-0713-48b1-8971-a7c4a9c64dfb
+                type: none
+              agent_id: ''
+              ingress_rules: 
+              crypto: 'off'
+        404:
+          description: Tunnel not found
+        400:
+          description: Bad request (check response message)
+    delete:
+      tags:
+        - "tunnel"
+      summary: Delete Tunnel
+      responses:
+        200:
+          description: Successful Response          
+        404:
+          description: Tunnel not found        
+
+definitions:
+  Tunnel:
+    title: Tunnel
+    type: object
+    properties:
+      id:
+        type: string
+      created_at:
+        type: integer
+      updated_at:
+        type: integer
+      destination:
+        type: string
+      name:
+        type: string
+      group:
+        type: string
+      host:
+        type: string
+      protocol:
+        type: string
+      description:
+        type: string
+      auth:
+        type: object
+        $ref: '#/definitions/TunnelAuth'
+      crypto:
+        type: string
+      # choices:
+      #   type: array
+      #   items:
+      #     $ref: '#/definitions/Choice'
+    example:
+      created_at: 1534409264
+      updated_at: 1534409264
+      id: b3237483-e96e-4f3a-905c-0d9603d66c1f
+      destination: http://localhost:8090
+      name: tunnel
+      group: ''
+      addr: ''
+      host: tunnelx.webrelay.io
+      mode: active
+      protocol: http
+      account_id: bd7e1dfc-54c8-408c-a885-7498bf1d8522
+      description: ''
+      features: 
+      auth:
+        created_at: 1534409264
+        updated_at: 1534409264
+        id: eb3fbc49-0713-48b1-8971-a7c4a9c64dfb
+        type: none
+      agent_id: ''
+      ingress_rules: 
+      crypto: 'off'
+
+  TunnelAuth:
+    title: TunnelAuth
+    type: object
+    properties:
+      id:
+        type: string
+      created_at:
+        type: integer
+      updated_at:
+        type: integer
+      type:
+        type: string
+      username:
+        type: string
+      password:
+        type: string
+      token:
+        type: string
+  # Choice:
+  #   title: Choice
+  #   type: object
+  #   properties:
+  #     votes:
+  #       type: integer
+  #       format: int32
+  #     choice:
+  #       type: string
+  #   required:
+  #     - votes
+  #     - choice
+  TunnelCreateRequest:
+    title: Tunnel Create Request
+    type: object
+    properties:
+      name:
+        type: string
+      group:
+        type: string
+      destination:
+        type: string
+      subdomain:
+        type: string
+      host:
+        type: string
+      crypto:
+        type: string
+      auth:
+        type: object
+        $ref: '#/definitions/TunnelAuth'
+      description:
+        type: string
+    required:
+      - destination
+    example:
+      name: tunnel-x
+      subdomain: tunnelx
+      destination: http://localhost:4000
+  TunnelUpdateRequest:
+    title: Tunnel Update Request
+    type: object
+    properties:
+      name:
+        type: string
+      destination:
+        type: string      
+      crypto:
+        type: string
+      auth:
+        type: object
+        $ref: '#/definitions/TunnelAuth'
+      description:
+        type: string
+    example:
+      name: tunnel-x
+      subdomain: tunnelx
+      destination: http://localhost:4000
+  # QuestionRequest:
+  #   title: Question Request
+  #   type: object
+  #   properties:
+  #     question:
+  #       type: string
+  #     choices:
+  #       type: array
+  #       items:
+  #         type: string
+  #   required:
+  #     - question
+  #     - choices
+  #   example:
+  #     question: Favourite programming language?
+  #     choices:
+  #       - Swift
+  #       - Python
+  #       - Objective-C
+  #       - Ruby
