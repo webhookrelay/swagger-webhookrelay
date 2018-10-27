@@ -402,6 +402,59 @@ paths:
           description: Successful Response          
         404:
           description: Bucket not found   
+
+  /v1/buckets/{bucketID}/inputs:
+    x-summary: Manage bucket inputs
+    parameters:
+      - name: "bucketID"
+        in: "path"
+        description: "ID of a bucket to create input in"
+        required: true
+        type: "string"
+    post:
+      tags:
+        - "input"
+      description: >-
+        Create one or more inputs for the bucket to get unique public endpoints.
+      summary: Create a New Input
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/InputRequest'
+      responses:
+        201:
+          description: ''
+          schema:
+            $ref: '#/definitions/Input'          
+        400:
+          description: "Invalid input request supplied"
+  /v1/buckets/{bucketID}/inputs/{inputID}:
+    x-summary: Manage bucket inputs
+    parameters:
+      - name: "bucketID"
+        in: "path"
+        description: "ID of a bucket to create input in"
+        required: true
+        type: "string"
+      - name: "inputID"
+        in: "path"
+        description: "ID of an input to delete"
+        required: true
+        type: "string"
+    delete:
+      tags:
+        - "input"
+      description: >-
+        Delete input. Once input is deleted, you will not be able to recreate a new input with the same ID.
+      summary: Delete Input      
+      responses:
+        200:
+          description: ''
+        404:
+          description: "Input or Bucket not found"
+
 definitions:
   # --------------------------- tunnels ---------------------------
   Tunnel:
