@@ -2,14 +2,26 @@ swagger: '2.0'
 info:
   version: '1.0'
   title: "Webhook Relay"
-  description: >-
-    Fast, secure tunnels to your internal networks. Webhook Relay allows you to expose your localhost 
+  description: |
+    # Introduction
+    Fast, secure tunnels to your internal networks. [Webhook Relay](https://webhookrelay.com) allows you to expose your localhost 
     or any other server in private network to the public internet without configuring port forwarding 
-    or firewalls. API accepts username/password, token key/secret pairs and JWT authentication methods.
-  # license:
-  #   name: Propriatary
-  #   url: https://github.com/apiaryio/polls-api/blob/master/LICENSE
-host: webhookrelay.apiblueprint.org
+    or firewalls. 
+    This API is documented in **Swagger format**. Webhook Relay allows to dynamically configure your tunnels and webhook forwarding.
+        
+    # Available authentication methods
+    Webhook Relay offers three forms of authentication:
+      - **Basic Auth** - only available for non-OAuth accounts. Use your username and password.
+      - **API Key** - available for all accounts, token pairs can be generated [here](https://my.webhookrelay.com/tokens)
+      - **JWT** - mainly used by the [admin dashboard](https://my.webhookrelay.com) with a 'Authorization Bearer: token' 
+   
+  termsOfService: "https://webhookrelay.com/tos/"
+  contact:
+    email: "support@webhookrelay.com"
+externalDocs:
+  description: Find out more in the official documentation.
+  url: 'https://webhookrelay.com/v1/guide/'
+host: my.webhookrelay.com
 basePath: /
 schemes:
 - "https"
@@ -17,6 +29,27 @@ consumes:
 - application/json
 produces:
 - application/json
+tags:
+  - name: Tokens
+    description: Token key & secret pairs are used to authenticate your API calls or for agents to subscribe to webhook forwarding or open tunnels.
+  - name: Buckets
+    description: Input and output grouping. Bucket allows to have multiple endpoints for the same destination or multiple destinations for fan-out style webhook forwarding.
+  - name: Outputs
+    description: Outputs are destinations, where your webhooks will be forwarded. Public destinations do not require agents to be running. Internal outputs will not work without an agent.
+  - name: Inputs
+    description: "Inputs are your public endpoints. Each input serves as an inbox that you can supply to your webhooks producer (ie: Github, Docker, IFTTT)"
+x-tagGroups:
+  - name: Authentication
+    tags:
+      - Tokens
+  - name: Webhook Forwarding
+    tags:
+      - Buckets
+      - Outputs
+      - Inputs
+  - name: Tunneling
+    tags:
+      - Tunnels
 paths:
   /v1/tunnels:
     x-summary: List and create tunnels
