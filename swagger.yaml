@@ -38,6 +38,10 @@ tags:
     description: Outputs are destinations, where your webhooks will be forwarded. Public destinations do not require agents to be running. Internal outputs will not work without an agent.
   - name: Inputs
     description: "Inputs are your public endpoints. Each input serves as an inbox that you can supply to your webhooks producer (ie: Github, Docker, IFTTT)"
+  - name: Tunnels
+    description: |
+      Tunnels allow remote access to internal web services such as local Wordpress, Jekyll or Hexo. Recommended `crypto` options are `flexible` or `tls-pass-through`.  
+        
 x-tagGroups:
   - name: Authentication
     tags:
@@ -92,6 +96,7 @@ paths:
           schema:
             $ref: '#/definitions/Tunnel'
           examples:
+            description: "Create a tunnel with a custom subdomain"
             application/json:
                 id: b3237483-e96e-4f3a-905c-0d9603d66c1f
                 created_at: 1534409264
