@@ -106,7 +106,7 @@ paths:
                 host: 'tunnelx.webrelay.io'
         400:
           description: "Invalid tunnel request supplied"
-  /v1/tunnels/{tunnelID}
+  /v1/tunnels/{tunnelID}:
     x-summary: Get, update and delete tunnels
     parameters:
       - name: "tunnelID"
@@ -258,7 +258,7 @@ paths:
               api_disabled: true
         400:
           description: ''
-  /v1/tokens/{tokenID} 
+  /v1/tokens/{tokenID}: 
     x-summary: Update and delete tokens
     parameters:
       - name: "tokenID"
@@ -379,7 +379,7 @@ paths:
         400:
           description: "Invalid bucket request supplied"
   
-  /v1/buckets/{bucketID}
+  /v1/buckets/{bucketID}:
     x-summary: Get and delete buckets
     parameters:
       - name: "bucketID"
