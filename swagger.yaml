@@ -236,26 +236,16 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/TokenRequest'
+            $ref: '#/definitions/Token'
       responses:
         201:
           description: 'Create a new token'
           schema:
             $ref: '#/definitions/TokenCreateResponse'
           examples:
-            application/json:                
-              created_at: 1535365683
-              updated_at: 1536161359              
-              id: cc58c9ea-5fa7-466e-91dc-5c08d0b1127c
-              description: ''
-              scopes:
-                buckets: []
-                tunnels:
-                - foo
-                - bar
-                - faa                
-              active: true
-              api_disabled: true
+            application/json:                          
+              key: cc58c9ea-5fa7-466e-91dc-5c08d0b1127c
+              secret: very-secret
         400:
           description: ''
   /v1/tokens/{tokenID}: 
@@ -275,7 +265,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/TokenRequest'
+            $ref: '#/definitions/Token'
       responses:
         200:
           description: Successful Response
@@ -295,7 +285,7 @@ paths:
                 - bar
                 - faa                
               active: true
-              api_disabled: true
+              api_access: "enabled"
         404:
           description: Tunnel not found
         400:
@@ -703,56 +693,40 @@ definitions:
     type: object
     properties:
       id:
-        type: string      
+        type: string
+        readOnly: true
       created_at:
         type: integer
+        readOnly: true
       updated_at:
         type: integer
+        readOnly: true
       last_login:
-        type: string  
+        type: string
+        readOnly: true
+      api_access:
+        type: string
+        enum:
+          - disabled
+          - enabled
+        description: "Enable/disable API access. If disabled, it can only be used to open tunnel connections or forward webhooks but not change any existing configuration"
+        example: "enabled"
       description:
         type: string
       scopes:
         type: object
         $ref: '#/definitions/TokenScopes'
-      api_access:
-        type: string
 
-  TokenRequest:
-    title: Token Request
-    type: object
-    properties:
-      description:
-        type: string
-      scopes:
-        type: object
-        $ref: '#/definitions/TokenScopes'
-      api_access:
-        type: string
-        description: "Can be either 'enabled' or 'disabled'. Tokens with disabled API access can only be used to open tunnels or forward webhooks"
   TokenCreateResponse:
      title: Token Create Response
      type: object
      properties:
-      id:
+      key:
         type: string
-        description: "Token ID is used as a key"
+        description: "Token key, this is an alias to token ID"
       secret:
         type: string
         description: "This is the only time secret is revealed as it is already encrypted by the system"
-      created_at:
-        type: integer
-      updated_at:
-        type: integer
-      last_login:
-        type: string  
-      description:
-        type: string
-      scopes:
-        type: object
-        $ref: '#/definitions/TokenScopes'
-      api_access:
-        type: string  
   TokenScopes:
     title: TokenScopes
     type: object
