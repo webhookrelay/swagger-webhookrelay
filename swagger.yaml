@@ -460,7 +460,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/InputRequest'
+            $ref: '#/definitions/Input'
       responses:
         201:
           description: ''
@@ -481,6 +481,25 @@ paths:
         description: "ID of an input to delete"
         required: true
         type: "string"
+    put:
+      tags:
+        - "Inputs"
+      description: >-
+        Update input endpoint response code, body or headers.
+      summary: Update Input
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Input'
+      responses:
+        200:
+          description: 'Input updated'
+          schema:
+            $ref: '#/definitions/Input'          
+        400:
+          description: "Invalid input request supplied"
     delete:
       tags:
         - "Inputs"
@@ -512,7 +531,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/OutputRequest'
+            $ref: '#/definitions/Output'
       responses:
         201:
           description: ''
@@ -544,7 +563,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/OutputRequest'
+            $ref: '#/definitions/Output'
       responses:
         200:
           description: 'Output updated'
@@ -747,6 +766,17 @@ definitions:
         items:
           type: string
   # --------------------------- buckets ---------------------------
+  Headers:
+    title: Headers for request/response
+    type: object
+    # map[string][]string    
+    additionalProperties: {}
+    description: A hashmap of header keys and a list of values for each string, Go equivalent map[string][]string 
+    example:
+      Content-Type: 
+        - JSON
+      Foo:
+        - Bar
   BucketRequest:
     title: Bucket create request
     type: object
@@ -761,14 +791,21 @@ definitions:
     properties:
       id:
         type: string
+        readOnly: true
       created_at:
         type: integer
+        readOnly: true
       updated_at:
         type: integer
+        readOnly: true
       name:
         type: string
       description:
         type: string
+      suspended:
+        type: boolean
+        readOnly: true
+        description: "Indicates that webhooks will not be received due to quota limits"
       auth:
         type: object
         $ref: '#/definitions/BucketAuth'         
@@ -806,19 +843,24 @@ definitions:
     properties:
       id:
         type: string
+        readOnly: true
       created_at:
         type: integer
+        readOnly: true
       updated_at:
         type: integer
+        readOnly: true
       name:
         type: string
-      description:
+      headers:
+        type: object        
+        $ref: "#/definitions/Headers"
+      status_code:
+        type: integer
+        description: Response status code to return when this input receives a webhook
+      body:
         type: string
-  InputRequest:
-    title: Input create request
-    properties:
-      name:
-        type: string
+        description: Response body to return when this input receives a webhook
       description:
         type: string
 
@@ -828,48 +870,23 @@ definitions:
     properties:
       id:
         type: string
+        readOnly: true
       created_at:
         type: integer
+        readOnly: true
       updated_at:
         type: integer
+        readOnly: true
       name:
-        type: string
-      internal:
-        type: boolean
-      destination:
-        type: string
-      description:
-        type: string
-  OutputRequest:
-    title: Output create request
-    properties:
-      name:
-        type: string
-      description:
         type: string
       internal:
         type: boolean
       destination:
         type: string
         description: "Destination, where to forward the webhook, such as 'http://localhost:4000'" 
-      
-  # QuestionRequest:
-  #   title: Question Request
-  #   type: object
-  #   properties:
-  #     question:
-  #       type: string
-  #     choices:
-  #       type: array
-  #       items:
-  #         type: string
-  #   required:
-  #     - question
-  #     - choices
-  #   example:
-  #     question: Favourite programming language?
-  #     choices:
-  #       - Swift
-  #       - Python
-  #       - Objective-C
-  #       - Ruby
+      headers:
+        type: object
+        description: Headers to override (for example Host)  
+        $ref: "#/definitions/Headers"
+      description:
+        type: string
