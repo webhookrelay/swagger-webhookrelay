@@ -89,7 +89,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/TunnelCreateRequest'
+            $ref: '#/definitions/Tunnel'
       responses:
         201:
           description: ''
@@ -157,7 +157,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/TunnelCreateRequest'
+            $ref: '#/definitions/Tunnel'
       responses:
         200:
           description: Successful Response
@@ -579,16 +579,29 @@ definitions:
     properties:
       id:
         type: string
+        readOnly: true
       created_at:
         type: integer
+        readOnly: true
       updated_at:
         type: integer
+        readOnly: true
       destination:
         type: string
       name:
         type: string
+      region:
+        type: string
+        enum:
+          - ""
+          - us-west
+          - eu
+          - au
+        description: "Tunnel region"
+        example: "au"
       group:
         type: string
+        description: Groups allow agents to subscribe to one or more tunnels
       host:
         type: string
       protocol:
@@ -599,7 +612,15 @@ definitions:
         type: object
         $ref: '#/definitions/TunnelAuth'
       crypto:
-        type: string      
+        enum:
+          - "off"
+          - flexible
+          - full
+          - full-strict
+          - tls-pass-through
+        type: string
+        description: Tunnel encryption type
+        example: flexible
     example:
       created_at: 1534409264
       updated_at: 1534409264
@@ -609,7 +630,6 @@ definitions:
       group: ''
       addr: ''
       host: tunnelx.webrelay.io
-      mode: active
       protocol: http
       account_id: bd7e1dfc-54c8-408c-a885-7498bf1d8522
       description: ''
@@ -629,10 +649,13 @@ definitions:
     properties:
       id:
         type: string
+        readOnly: true
       created_at:
         type: integer
+        readOnly: true
       updated_at:
         type: integer
+        readOnly: true
       type:
         type: string
       username:
@@ -640,53 +663,7 @@ definitions:
       password:
         type: string
       token:
-        type: string  
-  TunnelCreateRequest:
-    title: Tunnel Create Request
-    type: object
-    properties:
-      name:
         type: string
-      group:
-        type: string
-      destination:
-        type: string
-      subdomain:
-        type: string
-      host:
-        type: string
-      crypto:
-        type: string
-      auth:
-        type: object
-        $ref: '#/definitions/TunnelAuth'
-      description:
-        type: string
-    required:
-      - destination
-    example:
-      name: tunnel-x
-      subdomain: tunnelx
-      destination: http://localhost:4000
-  TunnelUpdateRequest:
-    title: Tunnel Update Request
-    type: object
-    properties:
-      name:
-        type: string
-      destination:
-        type: string      
-      crypto:
-        type: string
-      auth:
-        type: object
-        $ref: '#/definitions/TunnelAuth'
-      description:
-        type: string
-    example:
-      name: tunnel-x
-      subdomain: tunnelx
-      destination: http://localhost:4000
   # --------------------------- tokens ---------------------------
   Token:
     title: Token
