@@ -863,7 +863,43 @@ definitions:
         description: Response body to return when this input receives a webhook
       description:
         type: string
-
+  # Rules https://webhookrelay.com/v1/guide/webhook-forwarding.html#Request-matching-rules
+  AndRule:
+    title: And Rule
+    type: array
+    items:
+      $ref: '#/definitions/Rules'
+  OrRule:
+    title: Or Rule
+    type: array
+    items:
+      $ref: '#/definitions/Rules'
+  NotRule:
+    title: Not Rule
+    type: array
+    items:
+      $ref: '#/definitions/Rules'
+  MatchRule:
+    title: Match Rule
+    type: array
+    items:
+      $ref: '#/definitions/Rules'
+  Rules:
+    title: Rules
+    type: object
+    properties:
+      and:
+        type: object
+        $ref: "#/definitions/AndRule"
+      or:
+        type: object
+        $ref: "#/definitions/OrRule"
+      not:
+        type: object
+        $ref: "#/definitions/NotRule"
+      match:
+        type: object
+        $ref: "#/definitions/MatchRule"
   Output:
     title: Output
     type: object
@@ -877,10 +913,17 @@ definitions:
       updated_at:
         type: integer
         readOnly: true
+      bucket_id:
+        type: string
+        readOnly: true
       name:
         type: string
       internal:
         type: boolean
+        description: When internal output receives webhook, it forwards it to any connected agent (relay CLI, Docker agent or WebSocket connection)
+      tls_verification:
+        type: boolean
+        description: Enforce TLS verification where possible (internal relay agent)
       destination:
         type: string
         description: "Destination, where to forward the webhook, such as 'http://localhost:4000'" 
@@ -888,5 +931,9 @@ definitions:
         type: object
         description: Headers to override (for example Host)  
         $ref: "#/definitions/Headers"
+      rules:
+        type: object
+        description: Request matching rules, documentation can be found here https://webhookrelay.com/v1/guide/webhook-forwarding.html#Request-matching-rules
+        $ref: "#/definitions/Rules"
       description:
         type: string
