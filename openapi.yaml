@@ -391,6 +391,26 @@ paths:
         required: true
         schema:
           type: string
+    put:
+      tags:
+        - Buckets
+      description: Update bucket.
+      summary: Update Bucket
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Bucket"
+        required: true
+      responses:
+        "200":
+          description: Bucket updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Bucket"
+        "400":
+          description: Invalid bucket update request supplied
     get:
       tags:
         - Buckets
@@ -801,10 +821,12 @@ components:
           $ref: "#/components/schemas/BucketAuth"
         inputs:
           type: array
+          readOnly: true
           items:
             $ref: "#/components/schemas/Input"
         outputs:
           type: array
+          readOnly: true
           items:
             $ref: "#/components/schemas/Output"
     BucketAuth:
@@ -813,10 +835,13 @@ components:
       properties:
         id:
           type: string
+          readOnly: true
         created_at:
           type: integer
+          readOnly: true
         updated_at:
           type: integer
+          readOnly: true
         type:
           type: string
         username:
