@@ -393,9 +393,11 @@ paths:
         200:
           description: 'Bucket updated'
           schema:
-            $ref: '#/definitions/Bucket'          
+            $ref: '#/definitions/Bucket'
         400:
           description: "Invalid bucket update request supplied"
+        404:
+          description: Bucket not found
     get:
       tags:
         - "Buckets"

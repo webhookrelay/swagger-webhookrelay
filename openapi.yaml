@@ -411,6 +411,8 @@ paths:
                 $ref: "#/components/schemas/Bucket"
         "400":
           description: Invalid bucket update request supplied
+        "404":
+          description: Bucket not found
     get:
       tags:
         - Buckets
