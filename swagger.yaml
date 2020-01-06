@@ -864,9 +864,28 @@ definitions:
       $ref: '#/definitions/Rules'
   MatchRule:
     title: Match Rule
-    type: array
-    items:
-      $ref: '#/definitions/Rules'
+    type: object
+    properties:
+      parameter:
+        type: object
+        $ref: '#/definitions/RuleParameter'
+      type:
+        type: string
+        enum:
+          - "value"
+          - "contains"
+          - "does-not-contain"
+          - "regex"
+          - "payload-hash-sha1"
+          - "payload-hash-sha256"
+      value:
+        type: string
+      substring:
+        type: string
+      regex:
+        type: string
+      secret:
+        type: string
   Rules:
     title: Rules
     type: object
@@ -883,6 +902,18 @@ definitions:
       match:
         type: object
         $ref: "#/definitions/MatchRule"
+  RuleParameter:
+    title: RuleParameter
+    type: object
+    properties:
+      name: 
+        type: string
+      source:
+        type: string
+        enum:
+          - "header"
+          - "payload"
+          - "query"
   Output:
     title: Output
     type: object

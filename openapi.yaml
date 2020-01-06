@@ -894,9 +894,27 @@ components:
         $ref: "#/components/schemas/Rules"
     MatchRule:
       title: Match Rule
-      type: array
-      items:
-        $ref: "#/components/schemas/Rules"
+      type: object
+      properties:
+        parameter:
+          $ref: "#/components/schemas/RuleParameter"
+        type:
+          type: string
+          enum:
+            - value
+            - contains
+            - does-not-contain
+            - regex
+            - payload-hash-sha1
+            - payload-hash-sha256
+        value:
+          type: string
+        substring:
+          type: string
+        regex:
+          type: string
+        secret:
+          type: string
     Rules:
       title: Rules
       type: object
@@ -909,6 +927,18 @@ components:
           $ref: "#/components/schemas/NotRule"
         match:
           $ref: "#/components/schemas/MatchRule"
+    RuleParameter:
+      title: RuleParameter
+      type: object
+      properties:
+        name:
+          type: string
+        source:
+          type: string
+          enum:
+            - header
+            - payload
+            - query
     Output:
       title: Output
       type: object
