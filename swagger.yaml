@@ -591,7 +591,57 @@ paths:
           description: ''
         404:
           description: "Output or Bucket not found"
-
+  # ---------------------------   logs  ---------------------------
+  /v1/logs:
+    get:
+      tags:
+        - Logs
+      summary: List logs
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            $ref: '#/definitions/LogsResponse'
+  /v1/logs/{logID}/action:
+    post:
+      tags:
+        - Logs
+      description: You may resent log to one or more destinations
+      summary: Resent log
+      parameters:
+        - name: "logID"
+          in: "path"
+          required: true
+          description: "ID of a log"
+          type: "string"
+        - name: "bucket"
+          in: "query"
+          description: "specify bucket to get the logs based on"
+          type: "string"
+        - name: "limit"
+          in: "query"
+          description: "how many logs to return (for example 10)"
+          type: "integer"
+        - name: "offset"
+          in: "query"
+          description: "offset from the start"
+          type: "integer"
+        - name: "order"
+          in: "query"
+          description: "ordering of the logs, available values: 'created_at desc', 'created_at', 'method', 'method desc', 'status_code', 'status_code desc', 'status', 'status desc'"
+          type: "string"
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/LogAction'
+      responses:
+        200:
+          description: ""
+          schema:
+            $ref: '#/definitions/Response'
+        400:
+          description: Invalid request
 definitions:
   # --------------------------- tunnels ---------------------------
   Tunnel:
@@ -951,3 +1001,89 @@ definitions:
         $ref: "#/definitions/Rules"
       description:
         type: string
+  LogAction:
+    title: Webhook Log Action
+    type: object
+    properties:
+      action:
+        type: string
+        description: "Log action, for example 'resend'"
+      output:
+        type: string
+        description: "Optional, only set to an output ID if you want to resend this log to the specific output instead of all bucket outputs"
+  Response:
+    title: Action response
+    type: object
+    properties:
+      id:
+        type: string
+        description: "ID of the object"
+      status:
+        type: string
+        description: "Status of the action"
+  LogsResponse:
+    title: Logs API response
+    type: object
+    properties:
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/Log'
+      total:
+        type: integer
+      limit:
+        type: integer
+      offset:
+        type: integer
+  Log:
+    title: Webhook Log
+    type: object
+    properties:
+      id:
+        type: string
+        readOnly: true
+      created_at:
+        type: integer
+        readOnly: true
+      updated_at:
+        type: integer
+        readOnly: true
+      bucket_id:
+        type: string
+        readOnly: true
+      input_id:
+        type: string
+        readOnly: true
+      output_id:
+        type: string
+        readOnly: true        
+      internal:
+        type: boolean
+        description: When internal output receives webhook, it forwards it to any
+          connected agent (relay CLI, Docker agent or WebSocket connection)
+      # Response related fields
+      status_code:
+        type: integer
+      response_body:
+        type: string
+      response_headers:
+        $ref: "#/components/schemas/Headers"
+      status:
+        type: string
+        description: Request status, example values 'preparing', 'sent', 'failed', 'stalled', 'received', 'rejected'
+      retries:
+        type: integer
+        description: Retries taken so far
+      # Request details
+      headers:
+        $ref: "#/components/schemas/Headers"
+      raw_query:
+        type: string
+        description: raw query for example request to http://example.com?foo=bar is foo=bar
+      method:
+        type: string
+      body:
+        type: string
+      ephemeral:
+        type: boolean
+        description: This field is inherited from the bucket, if set - request/response body will not be set
