@@ -11,7 +11,9 @@ info:
 
     or firewalls. 
 
-    This API is documented in **Swagger format**. Webhook Relay allows to dynamically configure your tunnels and webhook forwarding.
+    This API is documented in **Swagger format**. Webhook Relay allows to dynamically configure your tunnels and webhook forwarding and request/response 
+
+    transformation using serverless functions.
         
     # Available authentication methods
 
@@ -19,6 +21,8 @@ info:
       - **Basic Auth** - only available for non-OAuth accounts. Use your username and password.
       - **API Key** - available for all accounts, token pairs can be generated [here](https://my.webhookrelay.com/tokens)
       - **JWT** - mainly used by the [admin dashboard](https://my.webhookrelay.com) with a 'Authorization Bearer: token' 
+
+    You can find Swagger and OpenAPI spec files here: [https://github.com/webhookrelay/swagger-webhookrelay](https://github.com/webhookrelay/swagger-webhookrelay).
   termsOfService: https://webhookrelay.com/tos/
   contact:
     email: support@webhookrelay.com
@@ -40,6 +44,25 @@ tags:
   - name: Inputs
     description: "Inputs are your public endpoints. Each input serves as an inbox that you
       can supply to your webhooks producer (ie: Github, Docker, IFTTT)"
+  - name: Logs
+    description: Webhook logs hold the status of received and forwarded webhooks. You can
+      use this API group to resend webhooks to one or more destinations
+  - name: Functions
+    description: >
+      Webhook Relay Functions provide an easy way to extract values from
+      webhooks and transform HTTP 
+
+      requests before passing them to their final destination. Function can be reused by any number 
+
+      of Inputs and/or Outputs. Since user doesn’t have to run a server, this type of function service 
+
+      is also known as FaaS (Function as a Service) or Serverless. 
+
+
+      Read more about functions here: https://webhookrelay.com/v1/guide/functions.
+
+
+      Basic function examples can be found here: https://webhookrelay.com/v1/examples/manipulating-request-body.
   - name: Tunnels
     description: >
       Tunnels allow remote access to internal web services such as local
@@ -54,6 +77,8 @@ x-tagGroups:
       - Buckets
       - Outputs
       - Inputs
+      - Logs
+      - Functions
   - name: Tunneling
     tags:
       - Tunnels
@@ -602,6 +627,111 @@ paths:
         "404":
           description: Output or Bucket not found
     summary: Manage bucket outputs
+  /v1/functions:
+    get:
+      tags:
+        - Functions
+      summary: List All Functions
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Function"
+            examples:
+              examples:
+                response:
+                  value:
+                    application/json:
+                      - created: 1496610194
+                        updated: 1532192772
+                        id: 339ed2e3-70cf-4a81-8db8-e95a9251155d
+                        name: lightspeedhq_to_webshipper
+                        driver: lua
+                        payload_size: 500814
+                        account_id: bd7e1dfc-54c8-408c-a885-7498bf1d8522
+    post:
+      tags:
+        - Functions
+      description: You may create your own functions using this action. It takes a JSON
+        object containing a function request. Once function is created, you
+        can  assign it based on its ID to bucket's input and/or output.
+      summary: Create a New Function
+      requestBody:
+        $ref: "#/components/requestBodies/FunctionRequest"
+      responses:
+        "201":
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Function"
+        "400":
+          description: Invalid function request supplied
+    summary: List and create functions
+  "/v1/functions/{functionID}":
+    parameters:
+      - name: functionID
+        in: path
+        description: ID of a function to return
+        required: true
+        schema:
+          type: string
+    put:
+      tags:
+        - Functions
+      description: Update function.
+      summary: Update Function
+      requestBody:
+        $ref: "#/components/requestBodies/FunctionRequest"
+      responses:
+        "200":
+          description: Function updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Function"
+        "400":
+          description: Invalid function update request supplied
+        "404":
+          description: Function not found
+    get:
+      tags:
+        - Functions
+      summary: Get Function Details
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Function"
+              examples:
+                response:
+                  value:
+                    - created: 1496610194
+                      updated: 1532192772
+                      id: 339ed2e3-70cf-4a81-8db8-e95a9251155d
+                      name: lightspeedhq_to_webshipper
+                      driver: lua
+                      payload: <base64 encoded function body>
+                      payload_size: 500814
+                      account_id: bd7e1dfc-54c8-408c-a885-7498bf1d8522
+        "404":
+          description: Function not found
+    delete:
+      tags:
+        - Functions
+      summary: Delete Function
+      responses:
+        "200":
+          description: Successful Response
+        "404":
+          description: Function not found
+    summary: Get and delete functions
   /v1/logs:
     get:
       tags:
@@ -691,6 +821,12 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Output"
+      required: true
+    FunctionRequest:
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/FunctionRequest"
       required: true
   schemas:
     Tunnel:
@@ -834,10 +970,16 @@ components:
           type: array
           items:
             type: string
+    HeaderItem:
+      title: Header values
+      type: array
+      items:
+        type: string
     Headers:
       title: Headers for request/response
       type: object
-      additionalProperties: {}
+      additionalProperties:
+        $ref: "#/components/schemas/HeaderItem"
       description: A hashmap of header keys and a list of values for each string, Go
         equivalent map[string][]string
       example:
@@ -929,6 +1071,9 @@ components:
           readOnly: true
         name:
           type: string
+        function_id:
+          type: string
+          description: ID of the function that will be executed for this input
         headers:
           $ref: "#/components/schemas/Headers"
         status_code:
@@ -1036,6 +1181,9 @@ components:
           $ref: "#/components/schemas/Rules"
         description:
           type: string
+        function_id:
+          type: string
+          description: ID of the function that will be executed for this output
     LogAction:
       title: Webhook Log Action
       type: object
@@ -1124,3 +1272,43 @@ components:
           type: boolean
           description: This field is inherited from the bucket, if set - request/response
             body will not be set
+    FunctionRequest:
+      title: Create/update function request
+      type: object
+      properties:
+        name:
+          type: string
+        payload:
+          type: string
+          description: base64 encoded function payload
+        driver:
+          type: string
+          description: Driver name (Lua, WASI)
+    Function:
+      title: Function
+      type: object
+      properties:
+        id:
+          type: string
+          readOnly: true
+        created:
+          type: integer
+          readOnly: true
+        updated:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+        payload:
+          type: string
+          description: base64 encoded function body
+        payload_size:
+          type: integer
+          readOnly: true
+        compression:
+          type: string
+          readOnly: true
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
