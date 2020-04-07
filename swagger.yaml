@@ -42,6 +42,12 @@ tags:
     description: "Inputs are your public endpoints. Each input serves as an inbox that you can supply to your webhooks producer (ie: Github, Docker, IFTTT)"
   - name: Logs
     description: "Webhook logs hold the status of received and forwarded webhooks. You can use this API group to resend webhooks to one or more destinations"
+  - name: Functions
+    description: |
+      Webhook Relay Functions provide an easy way to extract values from webhooks and transform HTTP 
+      requests before passing them to their final destination. Function can be reused by any number 
+      of Inputs and/or Outputs. Since user doesn’t have to run a server, this type of function service 
+      is also known as FaaS (Function as a Service) or Serverless.
   - name: Tunnels
     description: |
       Tunnels allow remote access to internal web services such as local Wordpress, Jekyll or Hexo. Recommended `crypto` options are `flexible` or `tls-pass-through`.  
@@ -56,6 +62,7 @@ x-tagGroups:
       - Outputs
       - Inputs
       - Logs
+      - Functions
   - name: Tunneling
     tags:
       - Tunnels
@@ -595,7 +602,113 @@ paths:
         200:
           description: ''
         404:
-          description: "Output or Bucket not found"
+          description: "Output or Bucket not found"  
+  # ------------------------   functions  -------------------------
+  /v1/functions:
+    x-summary: List and create functions
+    get:
+      tags:
+        - "Functions"
+      summary: List All Functions
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Function'
+          examples:
+            examples:
+              application/json:
+                - created: 1496610194
+                  updated: 1532192772
+                  id: 339ed2e3-70cf-4a81-8db8-e95a9251155d
+                  name: lightspeedhq_to_webshipper
+                  driver: "lua"
+                  payload_size: 500814
+                  account_id: bd7e1dfc-54c8-408c-a885-7498bf1d8522                  
+    post:
+      tags:
+        - "Functions"
+      description: >-
+        You may create your own functions using this action. It takes a JSON
+        object containing a function request. Once function is created, you can 
+        assign it based on its ID to bucket's input and/or output.
+      summary: Create a New Function
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/FunctionRequest'
+      responses:
+        201:
+          description: ''
+          schema:
+            $ref: '#/definitions/Function'          
+        400:
+          description: "Invalid function request supplied"
+  
+  /v1/functions/{functionID}:
+    x-summary: Get and delete functions
+    parameters:
+      - name: "functionID"
+        in: "path"
+        description: "ID of a function to return"
+        required: true
+        type: "string"
+    put:
+      tags:
+        - "Functions"
+      description: >-
+        Update function.
+      summary: Update Function
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/FunctionRequest'
+      responses:
+        200:
+          description: 'Function updated'
+          schema:
+            $ref: '#/definitions/Function'
+        400:
+          description: "Invalid function update request supplied"
+        404:
+          description: Function not found
+    get:
+      tags:
+        - "Functions"
+      summary: Get Function Details
+      responses:
+        200:
+          description: Successful Response
+          schema:
+             $ref: "#/definitions/Function"
+          examples:
+            application/json:
+              - created: 1496610194
+                updated: 1532192772
+                id: 339ed2e3-70cf-4a81-8db8-e95a9251155d
+                name: lightspeedhq_to_webshipper
+                driver: "lua"
+                payload: "<base64 encoded function body>"
+                payload_size: 500814
+                account_id: bd7e1dfc-54c8-408c-a885-7498bf1d8522
+
+        404:
+          description: Function not found
+    delete:
+      tags:
+        - "Functions"
+      summary: Delete Function
+      responses:
+        200:
+          description: Successful Response          
+        404:
+          description: Function not found   
   # ---------------------------   logs  ---------------------------
   /v1/logs:
     get:
@@ -1099,3 +1212,43 @@ definitions:
       ephemeral:
         type: boolean
         description: This field is inherited from the bucket, if set - request/response body will not be set
+  FunctionRequest:
+    title: Create/update function request
+    type: object
+    properties:
+      name:
+        type: string        
+      payload:
+        type: string
+        description: base64 encoded function payload
+      driver:
+        type: string
+        description: Driver name (Lua, WASI)
+  Function:
+    title: Function
+    type: object
+    properties:
+      id:
+        type: string
+        readOnly: true
+      created:
+        type: integer
+        readOnly: true
+      updated:
+        type: integer
+        readOnly: true
+      name:
+        type: string        
+      payload:
+        type: string
+        description: base64 encoded function body
+      payload_size:
+        type: integer
+        readOnly: true
+      compression: 
+        type: string
+        readOnly: true
+      metadata:
+        type: object
+        additionalProperties:
+          type: string
