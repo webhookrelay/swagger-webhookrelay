@@ -14,7 +14,9 @@ info:
       - **Basic Auth** - only available for non-OAuth accounts. Use your username and password.
       - **API Key** - available for all accounts, token pairs can be generated [here](https://my.webhookrelay.com/tokens)
       - **JWT** - mainly used by the [admin dashboard](https://my.webhookrelay.com) with a 'Authorization Bearer: token' 
-   
+    
+    You can find Swagger and OpenAPI spec files here: [https://github.com/webhookrelay/swagger-webhookrelay](https://github.com/webhookrelay/swagger-webhookrelay).
+
   termsOfService: "https://webhookrelay.com/tos/"
   contact:
     email: "support@webhookrelay.com"
@@ -38,6 +40,8 @@ tags:
     description: Outputs are destinations, where your webhooks will be forwarded. Public destinations do not require agents to be running. Internal outputs will not work without an agent.
   - name: Inputs
     description: "Inputs are your public endpoints. Each input serves as an inbox that you can supply to your webhooks producer (ie: Github, Docker, IFTTT)"
+  - name: Logs
+    description: "Webhook logs hold the status of received and forwarded webhooks. You can use this API group to resend webhooks to one or more destinations"
   - name: Tunnels
     description: |
       Tunnels allow remote access to internal web services such as local Wordpress, Jekyll or Hexo. Recommended `crypto` options are `flexible` or `tls-pass-through`.  
@@ -51,6 +55,7 @@ x-tagGroups:
       - Buckets
       - Outputs
       - Inputs
+      - Logs
   - name: Tunneling
     tags:
       - Tunnels
@@ -788,11 +793,18 @@ definitions:
         items:
           type: string
   # --------------------------- buckets ---------------------------
+  HeaderItem:
+    title: Header values
+    type: "array" 
+    items:
+      type: string
   Headers:
     title: Headers for request/response
     type: object
     # map[string][]string    
-    additionalProperties: {}
+    additionalProperties: {
+      $ref: '#/definitions/HeaderItem'
+    }
     description: A hashmap of header keys and a list of values for each string, Go equivalent map[string][]string 
     example:
       Content-Type: 
@@ -1067,7 +1079,7 @@ definitions:
       response_body:
         type: string
       response_headers:
-        $ref: "#/components/schemas/Headers"
+        $ref: "#/definitions/Headers"
       status:
         type: string
         description: Request status, example values 'preparing', 'sent', 'failed', 'stalled', 'received', 'rejected'
@@ -1076,7 +1088,7 @@ definitions:
         description: Retries taken so far
       # Request details
       headers:
-        $ref: "#/components/schemas/Headers"
+        $ref: "#/definitions/Headers"
       raw_query:
         type: string
         description: raw query for example request to http://example.com?foo=bar is foo=bar
