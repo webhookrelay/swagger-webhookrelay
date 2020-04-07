@@ -7,7 +7,8 @@ info:
     Fast, secure tunnels to your internal networks. [Webhook Relay](https://webhookrelay.com) allows you to expose your localhost 
     or any other server in private network to the public internet without configuring port forwarding 
     or firewalls. 
-    This API is documented in **Swagger format**. Webhook Relay allows to dynamically configure your tunnels and webhook forwarding.
+    This API is documented in **Swagger format**. Webhook Relay allows to dynamically configure your tunnels and webhook forwarding and request/response 
+    transformation using serverless functions.
         
     # Available authentication methods
     Webhook Relay offers three forms of authentication:
@@ -47,7 +48,11 @@ tags:
       Webhook Relay Functions provide an easy way to extract values from webhooks and transform HTTP 
       requests before passing them to their final destination. Function can be reused by any number 
       of Inputs and/or Outputs. Since user doesn’t have to run a server, this type of function service 
-      is also known as FaaS (Function as a Service) or Serverless.
+      is also known as FaaS (Function as a Service) or Serverless. 
+
+      Read more about functions here: https://webhookrelay.com/v1/guide/functions.
+
+      Basic function examples can be found here: https://webhookrelay.com/v1/examples/manipulating-request-body.
   - name: Tunnels
     description: |
       Tunnels allow remote access to internal web services such as local Wordpress, Jekyll or Hexo. Recommended `crypto` options are `flexible` or `tls-pass-through`.  
@@ -1010,6 +1015,9 @@ definitions:
         readOnly: true
       name:
         type: string
+      function_id:
+        type: string
+        description: ID of the function that will be executed for this input
       headers:
         type: object        
         $ref: "#/definitions/Headers"
@@ -1126,6 +1134,9 @@ definitions:
         $ref: "#/definitions/Rules"
       description:
         type: string
+      function_id:
+        type: string
+        description: ID of the function that will be executed for this output
   LogAction:
     title: Webhook Log Action
     type: object
