@@ -776,8 +776,8 @@ paths:
     post:
       tags:
         - Logs
-      description: You may resent log to one or more destinations
-      summary: Resent log
+      description: You may resend log to one or more destinations
+      summary: Resend log
       parameters:
         - name: logID
           in: path
