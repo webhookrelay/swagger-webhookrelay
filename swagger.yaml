@@ -757,23 +757,7 @@ paths:
           in: "path"
           required: true
           description: "ID of a log"
-          type: "string"
-        - name: "bucket"
-          in: "query"
-          description: "specify bucket to get the logs based on"
-          type: "string"
-        - name: "limit"
-          in: "query"
-          description: "how many logs to return (for example 10)"
-          type: "integer"
-        - name: "offset"
-          in: "query"
-          description: "offset from the start"
-          type: "integer"
-        - name: "order"
-          in: "query"
-          description: "ordering of the logs, available values: 'created_at desc', 'created_at', 'method', 'method desc', 'status_code', 'status_code desc', 'status', 'status desc'"
-          type: "string"
+          type: "string"       
         - name: body
           in: body
           required: true

@@ -785,28 +785,6 @@ paths:
           description: ID of a log
           schema:
             type: string
-        - name: bucket
-          in: query
-          description: specify bucket to get the logs based on
-          schema:
-            type: string
-        - name: limit
-          in: query
-          description: how many logs to return (for example 10)
-          schema:
-            type: integer
-        - name: offset
-          in: query
-          description: offset from the start
-          schema:
-            type: integer
-        - name: order
-          in: query
-          description: "ordering of the logs, available values: 'created_at desc',
-            'created_at', 'method', 'method desc', 'status_code', 'status_code
-            desc', 'status', 'status desc'"
-          schema:
-            type: string
       requestBody:
         content:
           application/json:
