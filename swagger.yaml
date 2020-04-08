@@ -720,6 +720,27 @@ paths:
       tags:
         - Logs
       summary: List logs
+      parameters:
+      - in: query
+        name: from
+        type: string               
+        description: "YYYY-MM-DD date from when the logs should be returned, for example '2020-01-01'"
+      - in: query
+        name: to
+        type: string               
+        description: "YYYY-MM-DD last day till when the logs should be returned, for example '2020-01-02' (includes the last day)"
+      - in: query
+        name: bucket
+        type: string               
+        description: "Optional bucket ID for filtering logs"
+      - in: query
+        name: limit
+        type: integer
+        description: "Limit of the logs to return"
+      - in: query
+        name: offset
+        type: integer
+        description: "Offset of the logs when querying"
       responses:
         200:
           description: Successful Response
