@@ -1197,7 +1197,7 @@ definitions:
         description: When internal output receives webhook, it forwards it to any connected agent (relay CLI, Docker agent or WebSocket connection)
       tls_verification:
         type: boolean
-        description: Enforce TLS verification where possible (internal relay agent)
+        description: Enforce TLS verification where possible (internal and public destinations)
       destination:
         type: string
         description: "Destination, where to forward the webhook, such as 'http://localhost:4000'" 
@@ -1209,6 +1209,9 @@ definitions:
         type: object
         description: Request matching rules, documentation can be found here https://webhookrelay.com/v1/guide/webhook-forwarding.html#Request-matching-rules
         $ref: "#/definitions/Rules"
+      timeout:
+        type: integer
+        description: "Timeout in seconds, value between 0 and 180"
       description:
         type: string
       function_id:
