@@ -741,6 +741,11 @@ paths:
         name: offset
         type: integer
         description: "Offset of the logs when querying"
+      - in: query
+        name: status
+        type: string
+        enum: [status, failed, stalled, received, rejected]
+        description: "Webhook log status"
       responses:
         200:
           description: Successful Response
@@ -770,6 +775,64 @@ paths:
             $ref: '#/definitions/Response'
         400:
           description: Invalid request
+  # Domain reservation
+  /v1/domains:
+    get:
+      tags:
+        - Domains
+      summary: List domain reservations      
+      responses:
+        200:
+          description: Successful Response
+          schema:
+            $ref: '#/definitions/Domain'
+    post:
+      tags:
+        - Domains
+      description: Reserve a domain      
+      parameters:    
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Domain'
+      responses:
+        201:
+          description: ""
+          schema:
+            $ref: '#/definitions/Response'
+        400:
+          description: Invalid request
+        412:
+          description: Domain already taken
+        451:
+          description: Your subscription doesn't include domain reservations
+        500:
+          description: Internal server error
+  /v1/domains/{domainID}:
+    x-summary: Get and delete buckets
+    parameters:
+      - name: "domainID"
+        in: "path"
+        description: "ID of a domain to delete"
+        required: true
+        type: "string"  
+    delete:
+      tags:
+        - "Domains"
+      summary: Delete a domain reservation
+      responses:
+        200:
+          description: Successful Response          
+        404:
+          description: Domain reservation not found  
+        412:
+          description: Can't delete domain reservation, it's in use by a tunnel or an input with a custom domain
+# -----------------------------------------------------------------
+#
+#                          DEFINITIONS
+#
+#------------------------------------------------------------------
 definitions:
   # --------------------------- tunnels ---------------------------
   Tunnel:
@@ -1032,6 +1095,15 @@ definitions:
       body:
         type: string
         description: Response body to return when this input receives a webhook
+      response_from_output:
+        type: string
+        description: Output ID to specify a single output for response or set it to 'anyOutput' to return response from any output. Output should respond within 10 seconds 
+      custom_domain:
+        type: string
+        description: Specify any custom domain from your Reserved Domains, such as example.hooks.webhookrelay.com or hooks.example.com (if used with your own top level domain name, create a CNAME pointing at hooks.webhookrelay.com) 
+      path_prefix:
+        type: string
+        description: When used with custom domains, path_prefix can host multiple input endpoints on a single domain, such as hooks.example.com/github -> Jenkins CI, hooks.example.com/gitlab -> Spinnaker
       description:
         type: string
   # Rules https://webhookrelay.com/v1/guide/webhook-forwarding.html#Request-matching-rules
@@ -1268,3 +1340,59 @@ definitions:
         type: object
         additionalProperties:
           type: string
+  Domain:
+    title: Reserved Domain
+    type: object
+    properties:
+      id:
+        type: string
+        readOnly: true
+      created:
+        type: integer
+        readOnly: true
+      updated:
+        type: integer
+        readOnly: true
+      domain:
+        type: string
+        description: Name of the domain to reserve, for example joe.hooks.webhookrelay.com, hooks.example.com, tunnel.mydomain.com, etc.
+  IntegrationConfiguration:
+    title: Integration Configuration
+    type: object
+    properties:
+      id:
+        type: string
+        readOnly: true
+      created:
+        type: integer
+        readOnly: true
+      updated:
+        type: integer
+        readOnly: true
+      buckets:
+        type: array
+        items:
+          $ref: '#/definitions/Bucket'
+      disabled:
+        type: boolean
+        description: Disable/enable notification configuration. Consistently failing configurations will be disabled
+      events:
+        type: array
+        items:
+          type: string
+          enum: [forwarding.function.error, forwarding.delivery.error]
+        description: "Event types, currently supported are: 'forwarding.function.error' for failed functions and 'forwarding.delivery.error' for failed webhook delivery. Learn more here https://webhookrelay.com/v1/guide/integrations"
+      plugin:
+        type: string
+        enum: [slack, webhook]
+        description: "Plugin to use, more info about webhook plugin can be found in the docs here: https://webhookrelay.com/v1/guide/integrations#Webhook"
+      status:
+        type: string
+        description: Plugin status
+        readOnly: true
+      message:
+        type: string
+        description: Status description
+      description:
+        type: string
+        description: Free form description field
