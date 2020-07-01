@@ -1255,6 +1255,10 @@ components:
           readOnly: true
         name:
           type: string
+        disabled:
+          type: boolean
+          description: Allows to disable specific output destination without deleting the
+            output itself.
         internal:
           type: boolean
           description: When internal output receives webhook, it forwards it to any
