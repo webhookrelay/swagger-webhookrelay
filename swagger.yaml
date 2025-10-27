@@ -1105,8 +1105,7 @@ definitions:
         type: string
         description: When used with custom domains, path_prefix can host multiple input endpoints on a single domain, such as hooks.example.com/github -> Jenkins CI, hooks.example.com/gitlab -> Spinnaker
       description:
-        type: string
-  # Rules https://webhookrelay.com/v1/guide/webhook-forwarding.html#Request-matching-rules
+        type: string  
   AndRule:
     title: And Rule
     type: array
