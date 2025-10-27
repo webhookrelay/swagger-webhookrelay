@@ -23,7 +23,7 @@ info:
     email: "support@webhookrelay.com"
 externalDocs:
   description: Find out more in the official documentation.
-  url: 'https://webhookrelay.com/v1/guide/'
+  url: 'https://webhookrelay.com/docs'
 host: my.webhookrelay.com
 basePath: /
 schemes:
@@ -50,9 +50,9 @@ tags:
       of Inputs and/or Outputs. Since user doesn’t have to run a server, this type of function service 
       is also known as FaaS (Function as a Service) or Serverless. 
 
-      Read more about functions here: https://webhookrelay.com/v1/guide/functions.
+      Read more about functions here: https://webhookrelay.com/docs/webhooks/functions/manipulating-json.
 
-      Basic function examples can be found here: https://webhookrelay.com/v1/examples/manipulating-request-body.
+      Basic function examples can be found here: https://webhookrelay.com/docs/webhooks/functions/modify-request.
   - name: Tunnels
     description: |
       Tunnels allow remote access to internal web services such as local Wordpress, Jekyll or Hexo. Recommended `crypto` options are `flexible` or `tls-pass-through`.  
@@ -1210,7 +1210,7 @@ definitions:
         $ref: "#/definitions/Headers"
       rules:
         type: object
-        description: Request matching rules, documentation can be found here https://webhookrelay.com/v1/guide/webhook-forwarding.html#Request-matching-rules
+        description: Request matching rules, documentation can be found here https://webhookrelay.com/docs/webhooks/public/public-destination
         $ref: "#/definitions/Rules"
       timeout:
         type: integer
@@ -1387,11 +1387,11 @@ definitions:
         items:
           type: string
           enum: [forwarding.function.error, forwarding.delivery.error]
-        description: "Event types, currently supported are: 'forwarding.function.error' for failed functions and 'forwarding.delivery.error' for failed webhook delivery. Learn more here https://webhookrelay.com/v1/guide/integrations"
+        description: "Event types, currently supported are: 'forwarding.function.error' for failed functions and 'forwarding.delivery.error' for failed webhook delivery."
       plugin:
         type: string
         enum: [slack, webhook]
-        description: "Plugin to use, more info about webhook plugin can be found in the docs here: https://webhookrelay.com/v1/guide/integrations#Webhook"
+        description: "Plugin to use"
       status:
         type: string
         description: Plugin status
